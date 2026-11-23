@@ -166,12 +166,21 @@ local function GetLocalMarkIndex(unit)
 	return nil
 end
 
+local function CanSetServerMarks()
+	if GetNumRaidMembers() > 0 then
+		return (IsRaidLeader() == 1) or (IsRaidOfficer() == 1)
+	elseif GetNumPartyMembers() > 0 then
+		return (IsPartyLeader() == 1)
+	end
+	return false
+end
+
 -- https://github.com/refaim/Turtle-WoW-UI-Source/blob/d6137c2ebd291f10ce284e586a5733dd5141bef2/Interface/FrameXML/TargetFrame.lua#L665
 Blizzard_SetRaidTargetIcon = SetRaidTargetIcon
 SetRaidTargetIcon = function(unit, index)
-	local solo = not IsPlayerInPartyOrRaid()
-	local use_superwow = SRTI.IsSuperWoWLoaded()
-	local use_nampower_local = (not use_superwow) and solo and SRTI.IsNampowerLocalMarkingEnabled()
+	local canServerMark = CanSetServerMarks()
+	local use_nampower_local = (not canServerMark) and SRTI.IsNampowerLocalMarkingEnabled()
+	local use_superwow_local = (not canServerMark) and (not use_nampower_local) and SRTI.IsSuperWoWLoaded()
 
 	local cur_index
 	if use_nampower_local then
@@ -185,13 +194,13 @@ SetRaidTargetIcon = function(unit, index)
 		new_index = 0
 	end
 
-	if use_superwow then
-		-- https://github.com/balakethelock/SuperWoW/wiki/Features
-		SetRaidTarget(unit, new_index, solo)
-	elseif use_nampower_local then
+	if use_nampower_local then
 		-- brues-code/nampower resolves the unit to a GUID and writes its
-		-- own client-local marker table directly -- no 3rd arg needed.
+		-- own client-local marker table directly (works solo and non-lead in groups).
 		SetLocalRaidTargetIndex(unit, new_index)
+	elseif use_superwow_local then
+		-- https://github.com/balakethelock/SuperWoW/wiki/Features
+		SetRaidTarget(unit, new_index, true)
 	else
 		SetRaidTarget(unit, new_index)
 	end

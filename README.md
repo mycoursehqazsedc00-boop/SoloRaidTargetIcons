@@ -85,3 +85,31 @@ solo marking is impossible and `/srti` will say so:
   detected, and any warnings.
 - `/srti next` / `/srti prev` -- cycle your target between your own marked
   enemies (requires UnitXP_SP3).
+
+## Quick Target Guide (Macros & Key Bindings)
+
+### Option A: Key Bindings (Recommended with BananaBar)
+When paired with **BananaBar** (`BananaBar_SuperCompat.lua`) and **[brues-code/nampower v4.6.1+](https://github.com/brues-code/nampower)**:
+1. Open **Esc → Key Bindings → BananaBar - Quick Mark & Cycling**.
+2. Bind **Mark Mouseover (Next Free Icon)** (e.g. `Alt+Q` or a mouse side button) to sweep your cursor over enemies and apply the next free raid icon (`Skull → Star`).
+3. Bind **Quick Target: Next Marked Enemy** / **Previous Marked Enemy** (e.g. `Alt+E` / `Alt+R`) to cycle between your marked enemies (uses `UnitXP_SP3` if installed, or falls back to `mark8..1` / `GetRaidTargets()`).
+4. Or bind **Target Symbol 1–8** under **BananaBar** to jump directly to a specific icon.
+
+### Option B: Macros (Standalone or with BananaBar)
+- **Apply Skull (8) to mouseover (or target):**
+  ```
+  /run SetRaidTarget(UnitExists("mouseover") and "mouseover" or "target", 8)
+  ```
+- **Apply next free icon to mouseover (with BananaBar SuperCompat):**
+  ```
+  /bbmarkmouseover
+  ```
+- **Cycle to next marked enemy:**
+  ```
+  /srti next
+  ```
+  *(or `/bbnextmark` with BananaBar SuperCompat)*
+- **Jump directly to Skull (8) or Cross (7):**
+  ```
+  /bbtarget 8
+  ```
